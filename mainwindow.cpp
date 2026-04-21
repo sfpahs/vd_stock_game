@@ -88,24 +88,31 @@ void MainWindow::setupUIElements()
     m_exchangeRateLabel->setStyleSheet("QLabel { padding: 5px 10px; font-weight: bold; }");
     m_exchangeRateLabel->setMinimumWidth(150);
 
-    // 오른쪽 코너: 수익률 + 환율 + ticker(순위) + 설정 버튼
-    QWidget* cornerContainer = new QWidget(this);
-    QHBoxLayout* cornerLayout = new QHBoxLayout(cornerContainer);
-    cornerLayout->setContentsMargins(0, 0, 4, 0);
-    cornerLayout->setSpacing(4);
+    // 상단 헤더 바: 수익률 + 환율 + ticker(순위) + 설정 버튼
+    QWidget* headerBar = new QWidget(this);
+    headerBar->setFixedHeight(40);
+    headerBar->setStyleSheet("QWidget { background-color: #f0f0f0; border-bottom: 1px solid #ccc; }");
+    QHBoxLayout* headerLayout = new QHBoxLayout(headerBar);
+    headerLayout->setContentsMargins(8, 0, 8, 0);
+    headerLayout->setSpacing(6);
 
-    cornerLayout->addWidget(m_profitRateLabel);
-    cornerLayout->addWidget(m_exchangeRateLabel);
+    headerLayout->addWidget(m_profitRateLabel);
+    headerLayout->addWidget(m_exchangeRateLabel);
 
-    m_ticker = new TickerWidget(cornerContainer);
-    cornerLayout->addWidget(m_ticker);
+    m_ticker = new TickerWidget(headerBar);
+    headerLayout->addWidget(m_ticker, 1);
 
-    QPushButton* settingsBtn = new QPushButton("⚙️", cornerContainer);
-    settingsBtn->setFixedSize(40, 40);
-    settingsBtn->setStyleSheet("QPushButton { border: none; font-size: 20px; }");
-    cornerLayout->addWidget(settingsBtn);
+    QPushButton* settingsBtn = new QPushButton("⚙️", headerBar);
+    settingsBtn->setFixedSize(36, 32);
+    settingsBtn->setStyleSheet("QPushButton { border: none; font-size: 18px; background: transparent; }");
+    headerLayout->addWidget(settingsBtn);
 
-    ui->tabWidget->setCornerWidget(cornerContainer, Qt::TopRightCorner);
+    // tabWidget 위에 헤더 바 삽입
+    QVBoxLayout* mainLayout = qobject_cast<QVBoxLayout*>(ui->centralwidget->layout());
+    if (mainLayout) {
+        mainLayout->insertWidget(0, headerBar);
+    }
+
     connect(settingsBtn, &QPushButton::clicked, this, &MainWindow::onSettingsClicked);
 
     DatabaseManager::instance().initDb();

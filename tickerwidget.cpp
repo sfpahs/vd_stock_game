@@ -5,7 +5,8 @@
 TickerWidget::TickerWidget(QWidget* parent)
     : QWidget(parent), m_offset(0)
 {
-    setFixedSize(360, 30);
+    setMinimumWidth(200);
+    setFixedHeight(30);
     setAttribute(Qt::WA_OpaquePaintEvent);
     m_timer = new QTimer(this);
     connect(m_timer, &QTimer::timeout, this, &TickerWidget::tick);
