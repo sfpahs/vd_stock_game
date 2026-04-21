@@ -14,7 +14,10 @@
       "Bash(cp \"MDS코인.png\" \"mds-coin.png\")",
       "Bash(cp \"광원전자.png\" \"gwangyeon-electronics.png\")",
       "Bash(cp \"나론에너지.png\" \"naron-energy.png\")",
-      "Bash(cmake --build .)"
+      "Bash(cmake --build .)",
+      "Bash(git rm *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
