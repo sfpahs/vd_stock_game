@@ -372,6 +372,11 @@ void MainWindow::setupStockCombo()
             }
         }
     }
+
+    if (ui->trade_symbol_combo->count() > 0) {
+        ui->trade_symbol_combo->setCurrentIndex(0);
+        QTimer::singleShot(0, this, [this]() { onSymbolChanged(0); });
+    }
 }
 
 void MainWindow::onSymbolChanged(int)

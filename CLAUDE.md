@@ -1,323 +1,240 @@
-# 모의투자 Qt 앱 프로젝트 문서
+# 모의투자 Qt 앱 (stock_scheduler) — 메인 문서
 
-## 프로젝트 개요
-**stock_scheduler** — 로컬 SQLite 기반 모의투자 포트폴리오 추적 앱
-- **기술스택**: Qt 6.11.0 (C++17) / CMake / SQLite
-- **UI**: 5탭 인터페이스 (Qt Designer)
-- **특징**: 로컬 저장, 하드코딩 종목, 자동 예약 실행
+> **📚 전체 문서는 `rules/` 폴더에 기능별로 분리되어 있습니다.**
 
 ---
 
-## 디렉토리 구조
+## 🚀 빠른 시작
+
+```bash
+# 빌드
+mkdir build && cd build
+cmake -G "MinGW Makefiles" ..
+mingw32-make -j4
+
+# 실행
+./stock_scheduler.exe
+```
+
+**초기 데이터**:
+- KRW 현금: 50,000,000원
+- USD 현금: $10,000.00
+- 제공 종목: 15개 (주식, 암호화폐)
+
+---
+
+## 📖 문서 구조
+
+### 핵심 문서 (먼저 읽기)
+| 문서 | 설명 |
+|------|------|
+| **[프로젝트 개요](rules/_overview.md)** | 프로젝트 소개, 디렉토리 구조, 빌드 방법 |
+| **[파일별 역할](rules/_files-reference.md)** | 각 소스파일의 클래스, 함수, API 상세 |
+
+### 기능별 상세 문서
+| 문서 | 설명 |
+|------|------|
+| **[DB 스키마](rules/_database-schema.md)** | 테이블 정의, 쿼리 패턴, 데이터 흐름 |
+| **[UI 레이아웃](rules/_ui-layout.md)** | 6개 탭 구성, 위젯, 신호-슬롯 |
+| **[이중통화](rules/_dual-currency.md)** | KRW/USD 자산 관리, 환전 메커니즘 |
+| **[LIMIT 주문](rules/_limit-order.md)** | 자동 체결 조건, 타이머, 재시도 로직 |
+
+### 동작 및 테스트 문서
+| 문서 | 설명 |
+|------|------|
+| **[주요 동작 흐름](rules/_trading-flow.md)** | 앱 시작, 매매, 환전, LIMIT 체결 시나리오 |
+| **[빌드 & 테스트](rules/_build-test.md)** | 컴파일 오류 해결, 테스트 체크리스트 |
+
+### 개발 및 리팩토링 문서
+| 문서 | 설명 |
+|------|------|
+| **[객체화 리팩토링](rules/_refactoring-oop.md)** | OOP 설계, 데이터/서비스 계층 분리, 예외 처리 |
+
+### 향후 계획
+| 문서 | 설명 |
+|------|------|
+| **[향후 개선사항](rules/_future-improvements.md)** | Priority별 로드맵, 기술 개선, 확장 계획 |
+
+---
+
+## 🎯 주요 기능
+
+✅ **MARKET 매매**
+- 주식 (KRW) 및 암호화폐 (USD) 거래
+- 실시간 자산 갱신
+
+✅ **LIMIT 주문**
+- 가격 기반 자동 체결 (1초 주기)
+- 재시도 메커니즘
+
+✅ **이중통화**
+- KRW (한국원) 및 USD (미국달러) 동시 관리
+- 실시간 환율 적용 환전
+
+✅ **자동 예약**
+- MARKET 주문: 앱 재시작 시 자동 실행
+- LIMIT 주문: 매 1초 체결 조건 검사
+
+✅ **포트폴리오 추적**
+- 보유 종목, 평가손익, 수익률
+- 통화별 색상 구분 (USD/KRW)
+
+✅ **메모 & 할일**
+- 거래 메모 추가/삭제
+- 체크박스로 완료 토글
+
+---
+
+## 📊 프로젝트 상태
+
+- **진행률**: 75% 완료 ✅
+- **남은 작업**: 빌드 테스트 및 버그 수정 (25%)
+
+### 완료된 항목
+- ✅ 이중통화 (KRW/USD) 구현
+- ✅ 환전 기능
+- ✅ LIMIT 주문 자동 체결
+- ✅ 타이머 기반 주기 검사
+
+### 예정 항목
+- ⏳ Qt Creator 빌드 (1-2시간)
+- ⏳ 기능별 테스트 (30-45분)
+- ⏳ 버그 수정 (30-60분)
+
+---
+
+## 🛠️ 기술 스택
+
+```
+언어: C++ 17
+UI: Qt 6.11.0 (Qt Designer)
+데이터베이스: SQLite
+빌드: CMake 3.16+
+컴파일러: MinGW 64-bit
+OS: Windows 11
+```
+
+---
+
+## 📋 의존성
+
+```cmake
+find_package(Qt6 COMPONENTS
+    Core
+    Gui
+    Widgets
+    Sql       # SQLite 지원
+    REQUIRED
+)
+```
+
+---
+
+## 🔍 핵심 클래스
+
+| 클래스 | 역할 |
+|-------|------|
+| **DatabaseManager** | 싱글톤 DB 관리 (CRUD, 환전, LIMIT 체결) |
+| **MainWindow** | 메인 UI, 탭 관리, 슬롯 구현 |
+| **PortfolioModel** | QAbstractTableModel (포트폴리오 테이블) |
+| **StockData** | 하드코딩 종목 (15개) |
+
+---
+
+## 🚦 빠른 참조
+
+### 자주 찾는 정보
+
+**Q: LIMIT 주문은 어떻게 작동하나요?**  
+→ [LIMIT 주문 메커니즘](rules/_limit-order.md) 참조
+
+**Q: 이중통화는 어떻게 구현되었나요?**  
+→ [이중통화 기능](rules/_dual-currency.md) 참조
+
+**Q: 빌드 오류가 발생했어요**  
+→ [빌드 & 테스트](rules/_build-test.md#컴파일-오류-해결) 참조
+
+**Q: 매매 흐름을 알고 싶어요**  
+→ [주요 동작 흐름](rules/_trading-flow.md) 참조
+
+**Q: DB 스키마를 확인하고 싶어요**  
+→ [DB 스키마](rules/_database-schema.md) 참조
+
+---
+
+## 📁 파일 구조
 
 ```
 stock_scheduler/
-├── CMakeLists.txt          # Qt6 CMake 빌드 설정 (Qt::Sql 포함)
-├── main.cpp                # 애플리케이션 진입점
-├── mainwindow.h / .cpp     # 메인 윈도우 + 슬롯 구현
-├── mainwindow.ui           # 5탭 UI 레이아웃 (Qt Designer XML)
-├── database.h / .cpp       # DatabaseManager: CRUD 연산
-├── stockdata.h             # 하드코딩 종목 15개 (구조체 + 헬퍼)
-├── portfoliomodel.h / .cpp # QAbstractTableModel: 포트폴리오 테이블
-├── PLAN.md                 # 구현 계획 문서
-├── CLAUDE.md               # 이 파일
-└── stock_portfolio.db      # SQLite DB (런타임 생성)
+├── CMakeLists.txt                  # 빌드 설정
+├── main.cpp                        # 진입점
+├── mainwindow.h / .cpp             # 메인 UI
+├── mainwindow.ui                   # UI 레이아웃
+├── database.h / .cpp               # DB 관리
+├── stockdata.h                     # 종목 데이터
+├── portfoliomodel.h / .cpp         # 포트폴리오 모델
+├── CLAUDE.md                       # 이 파일 (메인 인덱스)
+├── rules/                          # 상세 문서
+│   ├── _overview.md                # 프로젝트 개요
+│   ├── _files-reference.md         # 파일별 역할
+│   ├── _database-schema.md         # DB 스키마
+│   ├── _ui-layout.md               # UI 레이아웃
+│   ├── _dual-currency.md           # 이중통화
+│   ├── _limit-order.md             # LIMIT 주문
+│   ├── _trading-flow.md            # 동작 흐름
+│   ├── _build-test.md              # 빌드 & 테스트
+│   └── _future-improvements.md     # 향후 개선
+└── stock_portfolio.db              # SQLite DB (런타임 생성)
 ```
 
 ---
 
-## 파일별 역할
+## 🎓 학습 순서 (처음 사용자)
 
-### CMakeLists.txt
-- Qt6 6.5+ 요구 (Core, Widgets, **Sql**)
-- 소스파일 + 헤더 정의
-- CMake 기반 빌드
+1. **[프로젝트 개요](rules/_overview.md)** — 전체 그림 파악
+2. **[빌드 & 테스트](rules/_build-test.md)** — 빌드 및 실행
+3. **[UI 레이아웃](rules/_ui-layout.md)** — 6개 탭 이해
+4. **[주요 동작 흐름](rules/_trading-flow.md)** — 매매, 환전, LIMIT 동작
+5. **[파일별 역할](rules/_files-reference.md)** — 코드 구조
+6. **[DB 스키마](rules/_database-schema.md)** — 데이터 관리
+7. **[이중통화](rules/_dual-currency.md)** & **[LIMIT 주문](rules/_limit-order.md)** — 고급 기능
 
-### stockdata.h
-```cpp
-struct Stock {
-    QString symbol;   // "005930"
-    QString name;     // "삼성전자"
-    double  price;    // 78000
-};
-```
-- `stockList()` — 15종목 static 벡터
-- `stockPrice(symbol)` — 종목 현재가 조회
-- `stockName(symbol)` — 종목명 조회
+## 💻 개발자 순서 (코드 수정 시)
 
-### database.h / database.cpp (DatabaseManager)
-
-**싱글톤 패턴**: `DatabaseManager::instance()`
-
-#### 초기화
-- `initDb()` — DB 연결, 테이블 생성, 초기 현금(5000만원) 설정
-
-#### 계좌 / 포트폴리오
-- `getCash()` → double
-- `getHoldings()` → QVector<HoldingRow>  (보유 종목)
-- `getTrades()` → QVector<TradeRow>  (거래 이력)
-
-#### 매매
-- `buyStock(symbol, qty, price)` → bool
-  - 현금 차감 → holding 추가/갱신 → trade 기록
-  - 실패: 잔액 부족
-- `sellStock(symbol, qty, price)` → bool
-  - 현금 추가 → holding 수량 감소 → trade 기록
-  - 실패: 보유 수량 부족
-
-#### 예약 (Schedule)
-- `addSchedule(date, symbol, type, qty, price)` → bool
-- `getSchedules()` → QVector<ScheduleRow>
-- `executeDueSchedules()`
-  - 앱 시작 시 호출
-  - 오늘 날짜 이하 "pending" 예약 자동 실행
-  - 성공 시 status → "done"
-
-#### 메모 (Memo)
-- `addMemo(content)` → bool
-- `getMemos()` → QVector<MemoRow>
-- `toggleMemo(id)` → bool  (done 토글)
-- `deleteMemo(id)` → bool
-
-### portfoliomodel.h / portfoliomodel.cpp
-
-`QAbstractTableModel` 서브클래스
-
-**컬럼** (7개):
-1. 종목코드
-2. 종목명
-3. 수량
-4. 평균단가 (한국 로케일 포맷)
-5. 현재가
-6. 평가손익 (계산: (현재가 - 평균단가) × 수량)
-7. 수익률(%) (계산: (현재가 - 평균단가) / 평균단가 × 100)
-
-**특징**:
-- 손익 양수: 빨강 (Qt::red)
-- 손익 음수: 파랑 (Qt::blue)
-- 우측 정렬 (숫자)
-
-### mainwindow.h / mainwindow.cpp
-
-**UI 위젯 접근**: `ui->위젯명` (ui_mainwindow.h 자동생성)
-
-**슬롯**:
-- `onSymbolChanged(int)` — 종목 선택 → 현재가 + 총금액 갱신
-- `onQtyChanged(int)` — 수량 변경 → 총금액 갱신
-- `onBuyClicked()` — 매수 → 포트폴리오/거래내역 갱신
-- `onSellClicked()` — 매도 → 포트폴리오/거래내역 갱신
-- `onSchedAddClicked()` — 예약 등록
-- `onMemoAddClicked()` — 메모 추가
-- `onMemoDeleteClicked()` — 메모 삭제
-- `onMemoItemChanged(item)` — 메모 체크박스 → 완료 토글
-- `onTabChanged(int)` — 탭 전환 시 전체 갱신
-
-**헬퍼**:
-- `setupStockCombo()` — trade/sched 콤보박스 초기화
-- `refreshPortfolio()` — 포트폴리오 테이블 + 요약 갱신
-- `refreshHistory()` — 거래내역 테이블 갱신
-- `refreshSchedules()` — 예약 테이블 갱신
-- `refreshMemos()` — 메모 목록 갱신
-- `updateTradeSummary()` — 매매탭 현재가/총금액 표시
-
-### mainwindow.ui
-
-**5탭 구성**:
-
-#### Tab 1: 포트폴리오
-```
-[현금 잔액: ---] [총 평가액: ---] [총 손익: ---]
-┌─────────────────────────────────┐
-│ QTableView (PortfolioModel)      │
-└─────────────────────────────────┘
-```
-
-#### Tab 2: 매매
-```
-종목: [QComboBox]
-현재가: [라벨]
-수량: [QSpinBox]
-총 금액: [라벨]
-[매수 버튼] [매도 버튼]
-```
-
-#### Tab 3: 거래내역
-```
-┌──────────────────────────────────────┐
-│ QTableWidget: 시간/종목/유형/수량/가격 │
-└──────────────────────────────────────┘
-```
-
-#### Tab 4: 매매 예약
-```
-예약 날짜: [QDateEdit]
-종목: [QComboBox]
-유형: [매매 타입 콤보]
-수량: [QSpinBox]
-[예약 등록 버튼]
-┌──────────────────────────────────────┐
-│ QTableWidget: 날짜/종목/유형/수량/상태 │
-└──────────────────────────────────────┘
-```
-
-#### Tab 5: 메모/할일
-```
-[QLineEdit] [추가] [삭제]
-┌──────────────────────┐
-│ QListWidget (체크박스) │
-└──────────────────────┘
-```
+1. **[객체화 리팩토링](rules/_refactoring-oop.md)** — OOP 설계 및 구현 순서
+2. **[파일별 역할](rules/_files-reference.md)** — API 상세 정보
+3. **[주요 동작 흐름](rules/_trading-flow.md)** — 통합 방식 이해
 
 ---
 
-## DB 스키마
+## 🔗 외부 링크
 
-### account
-```sql
-CREATE TABLE account (
-  id   INTEGER PRIMARY KEY,
-  cash REAL
-);
--- 초기값: (1, 50000000)
-```
-
-### holdings
-```sql
-CREATE TABLE holdings (
-  symbol    TEXT PRIMARY KEY,
-  quantity  INTEGER,
-  avg_price REAL
-);
-```
-
-### trades
-```sql
-CREATE TABLE trades (
-  id        INTEGER PRIMARY KEY AUTOINCREMENT,
-  symbol    TEXT,
-  type      TEXT,      -- 'BUY' | 'SELL'
-  quantity  INTEGER,
-  price     REAL,
-  timestamp TEXT       -- 'YYYY-MM-DD HH:MM:SS'
-);
-```
-
-### schedules
-```sql
-CREATE TABLE schedules (
-  id       INTEGER PRIMARY KEY AUTOINCREMENT,
-  date     TEXT,      -- 'YYYY-MM-DD'
-  symbol   TEXT,
-  type     TEXT,      -- 'BUY' | 'SELL'
-  quantity INTEGER,
-  price    REAL,
-  status   TEXT DEFAULT 'pending'  -- 'pending' | 'done'
-);
-```
-
-### memos
-```sql
-CREATE TABLE memos (
-  id         INTEGER PRIMARY KEY AUTOINCREMENT,
-  content    TEXT,
-  done       INTEGER DEFAULT 0,  -- 0=false, 1=true
-  created_at TEXT               -- 'YYYY-MM-DD HH:MM:SS'
-);
-```
+- **Qt Documentation**: https://doc.qt.io/qt-6/
+- **SQLite Documentation**: https://www.sqlite.org/docs.html
+- **CMake Documentation**: https://cmake.org/documentation/
+- **MinGW**: https://www.mingw-w64.org/
 
 ---
 
-## 빌드 및 실행
+## 📝 라이선스
 
-### 빌드
-1. Qt Creator에서 프로젝트 열기
-2. **Build** → **Build Project** 클릭
-3. MinGW 64-bit 컴파일러 사용
-
-### 실행
-```bash
-./build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/stock_scheduler.exe
-```
-
-### 출력 파일
-- **stock_portfolio.db** — 현재 디렉토리에 자동 생성
+MIT License — 자유롭게 사용, 수정, 배포 가능
 
 ---
 
-## 주요 동작 흐름
+## ❓ 문제 해결
 
-### 앱 시작
-1. `main()` → MainWindow 생성
-2. `MainWindow::MainWindow()`
-   - `DatabaseManager::instance().initDb()` — DB 초기화
-   - `DatabaseManager::instance().executeDueSchedules()` — 대기 중인 예약 실행
-   - 모든 UI 탭 갱신 (`refresh*` 함수들)
+### 빌드 실패
+→ [빌드 & 테스트 - 컴파일 오류 해결](rules/_build-test.md#컴파일-오류-해결)
 
-### 매수 버튼 클릭
-1. `onBuyClicked()` 호출
-2. `DatabaseManager::buyStock()` 실행
-   - 트랜잭션 시작
-   - account.cash 차감
-   - holdings 추가 또는 평균단가 재계산
-   - trades 기록
-   - 트랜잭션 커밋
-3. 성공 시: `refreshPortfolio()`, `refreshHistory()` 호출
-4. 실패 시: 경고 메시지 (잔액 부족)
+### 기능 작동 안됨
+→ [빌드 & 테스트 - 테스트 체크리스트](rules/_build-test.md#테스트-체크리스트)
 
-### 매매 예약 실행
-- 앱 시작 시: `executeDueSchedules()`
-- SQL 쿼리: `date <= 오늘 AND status = 'pending'`
-- 각 예약에 대해 `buyStock()` 또는 `sellStock()` 실행
-- 성공하면 status → "done"
-
-### 메모 토글 (체크박스)
-1. `onMemoItemChanged()` 호출
-2. `DatabaseManager::toggleMemo(id)` 실행
-3. SQL: `UPDATE memos SET done = NOT done WHERE id = :id`
+### 버그 보고
+→ Issues 섹션에서 상세 설명 및 재현 단계 포함
 
 ---
 
-## 주의사항
-
-### 거래 트랜잭션
-- `buyStock()`, `sellStock()`은 자동 트랜잭션 사용
-- `QSqlDatabase::database().transaction()` / `.commit()`
-
-### 로케일
-- 숫자 포맷: `QLocale::Korean` 사용 (쉼표 구분)
-- 날짜 포맷: "yyyy-MM-dd"
-
-### 에러 처리
-- DB 실패 → 메시지박스 경고
-- SQL 에러는 `qWarning()` 출력
-
-### 메모리 관리
-- `MainWindow`: `ui` 포인터 동적할당 (소멸자에서 delete)
-- `PortfolioModel`: MainWindow의 자식 위젯 (자동 정리)
-
----
-
-## 테스트 체크리스트
-
-- [ ] 앱 시작 → DB 생성 확인
-- [ ] 매수 → 잔액 감소, 보유종목 추가
-- [ ] 매도 → 잔액 증가, 수량 감소
-- [ ] 보유 없을 때 매도 시도 → 실패 메시지
-- [ ] 잔액 부족 시 매수 → 실패 메시지
-- [ ] 예약 등록 → 테이블에 "pending" 상태로 표시
-- [ ] 오늘 날짜 예약 → 앱 재시작 시 자동 실행
-- [ ] 메모 추가 → 리스트에 표시
-- [ ] 메모 체크박스 → 토글 동작
-- [ ] 메모 삭제 → 리스트에서 제거
-- [ ] 앱 재시작 후 모든 데이터 유지 확인
-
----
-
-## 향후 개선 사항 (선택사항)
-
-1. **API 연동**: 하드코딩 대신 실시간 시세 API (야후, 알파바 등)
-2. **차트**: QCustomPlot 또는 Qt Charts 추가
-3. **성과 분석**: 수익률 그래프, 자산 변화 차트
-4. **분할 매수/매도**: 단계적 거래 기록
-5. **다중 포트폴리오**: 여러 계좌 관리
-6. **내보내기**: CSV/Excel 내보내기
+**마지막 업데이트**: 2026-04-21  
+**작성자**: Claude Code  
+**버전**: 1.0.0-beta
