@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/background.png</file>
+        <file>images/cva-coin.png</file>
+        <file>images/gsc-token.png</file>
+        <file>images/mds-coin.png</file>
+        <file>images/gwangyeon-electronics.png</file>
+        <file>images/naron-energy.png</file>
+        <file>images/ripple-coin.png</file>
+        <file>images/blockchain.png</file>
+        <file>images/lt-electronics.png</file>
+        <file>images/usd-krw.png</file>
+        <file>images/wonseol-futures.png</file>
+        <file>images/settings.svg</file>
+    </qresource>
+</RCC>

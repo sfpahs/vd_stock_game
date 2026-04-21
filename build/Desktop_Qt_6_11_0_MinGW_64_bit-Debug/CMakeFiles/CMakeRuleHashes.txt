@@ -1,0 +1,3 @@
+# Hashes of file build rules.
+05a87002af231114a0a987f4644eba2b CMakeFiles/stock_game_autogen
+96eed107be4945abf169a8ac91eb588a stock_game_autogen/timestamp

@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -rf build)",
+      "Bash(mkdir build *)",
+      "Bash(cmake ..)",
+      "Bash(make)",
+      "Bash(ls *)",
+      "Bash(cmake --preset default)",
+      "Bash(cmake --build --preset default --config Debug)",
+      "Bash(cmake --build build --config Debug)",
+      "Bash(cp \"CVA코인.png\" \"cva-coin.png\")",
+      "Bash(cp \"GSC토큰.png\" \"gsc-token.png\")",
+      "Bash(cp \"MDS코인.png\" \"mds-coin.png\")",
+      "Bash(cp \"광원전자.png\" \"gwangyeon-electronics.png\")",
+      "Bash(cp \"나론에너지.png\" \"naron-energy.png\")",
+      "Bash(cmake --build .)"
+    ]
+  }
+}

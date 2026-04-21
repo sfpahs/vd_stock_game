@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>754</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>모의투자 앱</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+   <layout class="QVBoxLayout" name="main_vlayout">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>2</number>
+      </property>
+      <widget class="QWidget" name="tab_portfolio">
+       <attribute name="title">
+        <string>포트폴리오</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="port_vlayout">
+        <item>
+         <layout class="QVBoxLayout" name="port_summary_vlayout">
+          <item>
+           <layout class="QHBoxLayout" name="port_summary_hlayout1">
+            <item>
+             <widget class="QLabel" name="port_cash_label">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>시작금액: --- | 현금: ---</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="port_summary_spacer1">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="port_summary_hlayout2">
+            <item>
+             <widget class="QLabel" name="port_total_label">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>총 평가액: --- | 수익률: ---%</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="port_summary_spacer2">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="port_summary_hlayout3">
+            <item>
+             <widget class="QLabel" name="port_pnl_label">
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>손익: --- | 거래횟수: --- | 기간: ---</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="port_summary_spacer3">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="port_content_hlayout">
+          <item>
+           <widget class="QTableView" name="port_table_view">
+            <property name="editTriggers">
+             <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+            </property>
+            <property name="alternatingRowColors">
+             <bool>true</bool>
+            </property>
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTableWidget" name="history_table_widget">
+            <property name="editTriggers">
+             <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+            </property>
+            <property name="alternatingRowColors">
+             <bool>true</bool>
+            </property>
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+            </property>
+            <property name="columnCount">
+             <number>7</number>
+            </property>
+            <column/>
+            <column/>
+            <column/>
+            <column/>
+            <column/>
+            <column/>
+            <column/>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_trade">
+       <attribute name="title">
+        <string>매매</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="trade_vlayout">
+        <item>
+         <widget class="QChartView" name="trade_chart_view"/>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="trade_bottom_hlayout">
+          <item>
+           <layout class="QVBoxLayout" name="trade_left_vlayout">
+            <item>
+             <layout class="QFormLayout" name="trade_form">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_symbol">
+                <property name="text">
+                 <string>종목</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QComboBox" name="trade_symbol_combo">
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_order_type">
+                <property name="text">
+                 <string>주문 유형</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QComboBox" name="trade_order_type_combo">
+                <item>
+                 <property name="text">
+                  <string>시장가</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>지정가</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_price">
+                <property name="text">
+                 <string>매수가격</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QDoubleSpinBox" name="trade_price_input">
+                <property name="decimals">
+                 <number>2</number>
+                </property>
+                <property name="minimum">
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>99999999.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.010000000000000</double>
+                </property>
+                <property name="value">
+                 <double>0.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_qty">
+                <property name="text">
+                 <string>수량</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QSpinBox" name="trade_qty_spin">
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>100000</number>
+                </property>
+                <property name="value">
+                 <number>1</number>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="label_total_cost">
+                <property name="text">
+                 <string>총 금액</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <widget class="QLabel" name="trade_total_label">
+                <property name="text">
+                 <string>---</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="label_fee_preview">
+                <property name="text">
+                 <string>예상 수수료</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1">
+               <widget class="QLabel" name="trade_fee_label">
+                <property name="text">
+                 <string>---</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="trade_type_hlayout">
+              <item>
+               <widget class="QPushButton" name="trade_buy_btn">
+                <property name="text">
+                 <string>매수</string>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="trade_sell_btn">
+                <property name="text">
+                 <string>매도</string>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="trade_button_hlayout">
+              <item>
+               <widget class="QPushButton" name="trade_execute_btn">
+                <property name="text">
+                 <string>주문전송</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="trade_next_time_btn">
+                <property name="text">
+                 <string>시간 경과 →</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer name="trade_left_spacer">
+              <property name="orientation">
+               <enum>Qt::Orientation::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="trade_pending_group">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>2</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="title">
+             <string>미체결 주문</string>
+            </property>
+            <layout class="QVBoxLayout" name="pending_vlayout">
+             <item>
+              <widget class="QTableWidget" name="trade_pending_table">
+               <property name="editTriggers">
+                <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+               </property>
+               <property name="alternatingRowColors">
+                <bool>true</bool>
+               </property>
+               <property name="selectionBehavior">
+                <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+               </property>
+               <property name="columnCount">
+                <number>5</number>
+               </property>
+               <column/>
+               <column/>
+               <column/>
+               <column/>
+               <column/>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="pending_button_hlayout">
+               <item>
+                <widget class="QPushButton" name="trade_modify_btn">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>정정</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="trade_cancel_btn">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>취소</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="pending_button_spacer">
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_bank">
+       <attribute name="title">
+        <string>은행</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="bank_vlayout">
+        <item>
+         <layout class="QFormLayout" name="bank_form">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_bank_fee_title">
+            <property name="text">
+             <string>누적 수수료</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="bank_fee_label">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>---</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_bank_tax_title">
+            <property name="text">
+             <string>누적 거래세</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="bank_tax_label">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>---</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_bank_total_cost_title">
+            <property name="text">
+             <string>총 비용 (수수료+세금)</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="bank_total_cost_label">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>---</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QChartView" name="bank_exchange_chart"/>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1000</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QChartView</class>
+   <extends>QGraphicsView</extends>
+   <header>QtCharts/QChartView</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
