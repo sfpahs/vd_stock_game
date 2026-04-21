@@ -417,9 +417,9 @@ void MainWindow::onSymbolChanged(int)
             changeRate = ((price - openPrice) / openPrice) * 100.0;
         }
 
-        QColor changeColor = changeRate >= 0 ? QColor("#E53935") : QColor("#1E88E5");  // 빨강/파랑
+        const char* changeColorStr = changeRate >= 0 ? "#E53935" : "#1E88E5";
         m_stockChangeRateLabel->setText(QString("등락율: %1%").arg(QString::number(changeRate, 'f', 2)));
-        m_stockChangeRateLabel->setStyleSheet(QString("QLabel { font-size: 12px; color: %1; }").arg(changeColor.name()));
+        m_stockChangeRateLabel->setStyleSheet(QString("QLabel { font-size: 12px; color: %1; }").arg(changeColorStr));
 
         // 아이콘 업데이트
         QString imagePath = stockImagePath(symbol);
@@ -532,22 +532,23 @@ void MainWindow::onExecuteClicked()
         price = ui->trade_price_input->value();
     }
 
-    bool success = false;
-    QString message;
-
-    if (isBuy) {
-        success = DatabaseManager::instance().buyStock(symbol, qty, price, orderType);
-        message = success ? "주문접수" : "잔액 부족 또는 오류 발생!";
-    } else {
-        success = DatabaseManager::instance().sellStock(symbol, qty, price, orderType);
-        message = success ? "주문접수" : "보유 수량 부족 또는 오류 발생!";
+    try {
+        if (isBuy) {
+            TradeService::instance().buy(symbol, qty, price, orderType);
+        } else {
+            TradeService::instance().sell(symbol, qty, price, orderType);
+        }
+        if (orderType == "MARKET") {
+            playExecutionSound(isBuy ? "BUY" : "SELL");
+        }
+        showToast("주문접수", true, isBuy);
+    } catch (const InsufficientBalanceException& e) {
+        showToast("잔액 부족!", false, isBuy);
+    } catch (const InsufficientQuantityException& e) {
+        showToast("보유 수량 부족!", false, isBuy);
+    } catch (const TradeException& e) {
+        showToast(QString::fromStdString(e.what()), false, isBuy);
     }
-
-    if (success && orderType == "MARKET") {
-        playExecutionSound(isBuy ? "BUY" : "SELL");
-    }
-
-    showToast(message, success, isBuy);
     refreshPortfolio();
     refreshHistory(symbol);
     refreshBank();
@@ -633,7 +634,7 @@ void MainWindow::refreshPortfolio()
 
     double cash = DatabaseManager::instance().getCash();
     double usdCash = DatabaseManager::instance().getUsdCash();
-    auto holdings = DatabaseManager::instance().getHoldings();
+    const auto holdings = DatabaseManager::instance().getHoldings();
     double initialCash = DatabaseManager::instance().getInitialCash();
     int tradeCount = DatabaseManager::instance().getTradeCount();
     QString startDate = DatabaseManager::instance().getStartDate();
@@ -657,10 +658,10 @@ void MainWindow::refreshPortfolio()
     QLocale enLocale(QLocale::English);
 
     // 수익률 표시 (양수: 빨강, 음수: 파랑)
-    QColor profitColor = profitRate >= 0 ? QColor("#E53935") : QColor("#1E88E5");
+    const char* profitColorStr = profitRate >= 0 ? "#E53935" : "#1E88E5";
     QString profitText = QString::number(profitRate, 'f', 2) + "%";
     m_profitRateLabel->setText("수익률: " + profitText);
-    m_profitRateLabel->setStyleSheet(QString("QLabel { padding: 5px 10px; font-weight: bold; color: %1; }").arg(profitColor.name()));
+    m_profitRateLabel->setStyleSheet(QString("QLabel { padding: 5px 10px; font-weight: bold; color: %1; }").arg(profitColorStr));
 
     ui->port_cash_label->setText("시작금액: " + locale.toString(initialCash, 'f', 0) + " 원  |  현금(KRW): " + locale.toString(cash, 'f', 0) + " 원 | 현금(USD): $" + enLocale.toString(usdCash, 'f', 2));
     ui->port_total_label->setText("총 평가액: " + locale.toString(totalEval, 'f', 0) + " 원  |  수익률: " + QString::number(profitRate, 'f', 2) + "%");
@@ -673,7 +674,7 @@ void MainWindow::refreshHistory(const QString& filterSymbol)
     ui->history_table_widget->setColumnCount(8);
     ui->history_table_widget->setHorizontalHeaderLabels({"시간", "종목코드", "종목명", "유형", "주문유형", "수량", "가격", "수수료"});
 
-    auto trades = DatabaseManager::instance().getTrades();
+    const auto trades = DatabaseManager::instance().getTrades();
     QLocale locale(QLocale::Korean);
 
     ui->history_table_widget->verticalHeader()->setVisible(false);
@@ -686,11 +687,11 @@ void MainWindow::refreshHistory(const QString& filterSymbol)
 
         QColor textColor, bgColor;
         if (t.type == "BUY") {
-            textColor = QColor("#E53935");
-            bgColor = QColor(229, 57, 53, 31);
+            textColor = QColor(229, 57, 53);
+            bgColor   = QColor(229, 57, 53, 31);
         } else {
-            textColor = QColor("#1E88E5");
-            bgColor = QColor(30, 136, 229, 31);
+            textColor = QColor(30, 136, 229);
+            bgColor   = QColor(30, 136, 229, 31);
         }
 
         QString orderTypeText = (t.orderType == "MARKET") ? "시장가" : "지정가";
@@ -742,9 +743,9 @@ void MainWindow::refreshBank()
     if (m_bankExchangeRateChangeLabel && rateHistory.size() >= 2) {
         double openRate = rateHistory.first();
         double changeRate = ((rate - openRate) / openRate) * 100.0;
-        QColor changeColor = changeRate >= 0 ? QColor("#E53935") : QColor("#1E88E5");
+        const char* changeColorStr = changeRate >= 0 ? "#E53935" : "#1E88E5";
         m_bankExchangeRateChangeLabel->setText(QString("변동률: %1%").arg(QString::number(changeRate, 'f', 2)));
-        m_bankExchangeRateChangeLabel->setStyleSheet(QString("QLabel { font-size: 12px; color: %1; }").arg(changeColor.name()));
+        m_bankExchangeRateChangeLabel->setStyleSheet(QString("QLabel { font-size: 12px; color: %1; }").arg(changeColorStr));
     }
 
     if (!isVisible()) return;
@@ -802,7 +803,7 @@ void MainWindow::onNextTimeClicked()
         updateGamePrices();
     }
 
-    DatabaseManager::instance().checkAndExecuteSchedules();
+    TradeService::instance().checkAndExecuteSchedules();
 
     QString symbol = ui->trade_symbol_combo->currentData().toString();
 
@@ -821,7 +822,7 @@ void MainWindow::onNextTimeClicked()
 void MainWindow::onAutoTimeUpdate()
 {
     updateGamePrices();
-    QString executedType = DatabaseManager::instance().checkAndExecuteSchedules();
+    QString executedType = TradeService::instance().checkAndExecuteSchedules();
 
     if (!executedType.isEmpty()) {
         playExecutionSound(executedType);
@@ -860,9 +861,9 @@ void MainWindow::onAutoTimeUpdate()
             changeRate = ((price - openPrice) / openPrice) * 100.0;
         }
 
-        QColor changeColor = changeRate >= 0 ? QColor("#E53935") : QColor("#1E88E5");
+        const char* changeColorStr = changeRate >= 0 ? "#E53935" : "#1E88E5";
         m_stockChangeRateLabel->setText(QString("등락율: %1%").arg(QString::number(changeRate, 'f', 2)));
-        m_stockChangeRateLabel->setStyleSheet(QString("QLabel { font-size: 12px; color: %1; }").arg(changeColor.name()));
+        m_stockChangeRateLabel->setStyleSheet(QString("QLabel { font-size: 12px; color: %1; }").arg(changeColorStr));
     }
 
     // Only update price for market orders, not limit orders
@@ -972,14 +973,14 @@ void MainWindow::refreshPendingOrders(const QString& symbol)
     ui->trade_pending_table->setHorizontalHeaderLabels({"번호", "구분", "수량", "지정가", "등록시간", "정정", "취소"});
     ui->trade_pending_table->verticalHeader()->setVisible(false);
 
-    auto schedules = DatabaseManager::instance().getSchedules(symbol);
+    const auto schedules = ScheduleService::instance().get(symbol);
     QLocale locale(QLocale::Korean);
 
     for (const ScheduleRow& s : schedules) {
         int row = ui->trade_pending_table->rowCount();
         ui->trade_pending_table->insertRow(row);
 
-        QColor textColor = (s.type == "BUY") ? QColor("#E53935") : QColor("#1E88E5");
+        QColor textColor = (s.type == "BUY") ? QColor(229, 57, 53) : QColor(30, 136, 229);
         QColor bgColor = (s.type == "BUY") ? QColor(229, 57, 53, 31) : QColor(30, 136, 229, 31);
 
         auto makeItem = [&](const QString& text) {
@@ -1033,7 +1034,7 @@ void MainWindow::onModifyScheduleClicked()
 
 void MainWindow::modifyScheduleById(int id)
 {
-    auto schedules = DatabaseManager::instance().getSchedules();
+    const auto schedules = ScheduleService::instance().get();
 
     ScheduleRow selectedSchedule;
     bool found = false;
@@ -1082,7 +1083,7 @@ void MainWindow::modifyScheduleById(int id)
     connect(&cancelBtn, &QPushButton::clicked, &dlg, &QDialog::reject);
 
     if (dlg.exec() == QDialog::Accepted) {
-        if (DatabaseManager::instance().modifySchedule(id, qtyInput.value(), priceInput.value())) {
+        if (ScheduleService::instance().modify(id, qtyInput.value(), priceInput.value())) {
             refreshPendingOrders(ui->trade_symbol_combo->currentData().toString());
         }
     }
@@ -1105,7 +1106,7 @@ void MainWindow::cancelScheduleById(int id)
                                     QMessageBox::Yes | QMessageBox::No);
 
     if (ret == QMessageBox::Yes) {
-        if (DatabaseManager::instance().cancelSchedule(id)) {
+        if (ScheduleService::instance().cancel(id)) {
             refreshPendingOrders(ui->trade_symbol_combo->currentData().toString());
         }
     }
@@ -1177,7 +1178,7 @@ void MainWindow::onSettingsClicked()
         if (ret == QMessageBox::Yes) {
             auto& db = DatabaseManager::instance();
             double cash = db.getCash();
-            auto holdings = db.getHoldings();
+            const auto holdings = db.getHoldings();
             double initialCash = db.getInitialCash();
 
             double totalEval = cash;
@@ -1226,9 +1227,7 @@ void MainWindow::refreshTicker()
         QString sign = (r.profitRate >= 0) ? "+" : "";
         QString name = r.nickname.isEmpty() ? "익명" : r.nickname;
         rankText += QString("%1 %2 %3%  ")
-                    .arg(medals[i])
-                    .arg(name)
-                    .arg(sign + QString::number(r.profitRate, 'f', 2));
+                    .arg(medals[i], name, sign + QString::number(r.profitRate, 'f', 2));
     }
     m_ticker->setText(rankText.trimmed());
 }
@@ -1480,15 +1479,15 @@ void MainWindow::onExchangeClicked()
             double netAmount = amount - fee;
             result = netAmount / rate;
             infoLabel->setText(QString("수수료: %1원 (3%) | 받을 달러: $%2")
-                              .arg(locale.toString(fee, 'f', 0))
-                              .arg(enLocale.toString(result, 'f', 2)));
+                              .arg(locale.toString(fee, 'f', 0),
+                                   enLocale.toString(result, 'f', 2)));
         } else {
             fee = amount * 0.03;  // 3% 수수료
             double netAmount = amount - fee;
             result = netAmount * rate;
             infoLabel->setText(QString("수수료: $%1 (3%) | 받을 원화: %2원")
-                              .arg(enLocale.toString(fee, 'f', 2))
-                              .arg(locale.toString(result, 'f', 0)));
+                              .arg(enLocale.toString(fee, 'f', 2),
+                                   locale.toString(result, 'f', 0)));
         }
     };
 
@@ -1526,30 +1525,27 @@ void MainWindow::onExchangeClicked()
     }
 
     QString direction = directionCombo->currentData().toString();
-    bool success = false;
-    QString message;
-
-    double fee = amount * 0.03;  // 3% 수수료
+    double fee       = amount * 0.03;
     double netAmount = amount - fee;
 
-    if (direction == "krw_to_usd") {
-        success = DatabaseManager::instance().exchangeToUsd(netAmount);
-        message = success ? QString("원화 %1원 환전 (수수료: %2원) → 달러 수취")
-                            .arg(locale.toString(amount, 'f', 0))
-                            .arg(locale.toString(fee, 'f', 0))
-                          : "환전 실패: 원화 잔액 부족";
-    } else {
-        success = DatabaseManager::instance().exchangeToKrw(netAmount);
-        message = success ? QString("달러 %1 환전 (수수료: $%2) → 원화 수취")
-                            .arg(enLocale.toString(amount, 'f', 2))
-                            .arg(enLocale.toString(fee, 'f', 2))
-                          : "환전 실패: 달러 잔액 부족";
-    }
-
-    showToast(message, success);
-    if (success) {
+    try {
+        if (direction == "krw_to_usd") {
+            ExchangeService::instance().exchangeToUsd(netAmount);
+            showToast(QString("원화 %1원 환전 (수수료: %2원) → 달러 수취")
+                      .arg(locale.toString(amount, 'f', 0),
+                           locale.toString(fee, 'f', 0)), true);
+        } else {
+            ExchangeService::instance().exchangeToKrw(netAmount);
+            showToast(QString("달러 %1 환전 (수수료: $%2) → 원화 수취")
+                      .arg(enLocale.toString(amount, 'f', 2),
+                           enLocale.toString(fee, 'f', 2)), true);
+        }
         refreshPortfolio();
         refreshBank();
+    } catch (const InsufficientBalanceException&) {
+        showToast("환전 실패: 잔액 부족", false);
+    } catch (const TradeException& e) {
+        showToast(QString::fromStdString(e.what()), false);
     }
 }
 

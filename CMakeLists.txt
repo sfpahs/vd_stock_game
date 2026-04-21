@@ -14,6 +14,13 @@ qt_add_executable(stock_game
     database.h
     database.cpp
     stockdata.h
+    stockmanager.h
+    stockmanager.cpp
+    models.h
+    exceptions.h
+    tradeservice.h
+    exchangeservice.h
+    scheduleservice.h
     portfoliomodel.h
     portfoliomodel.cpp
     tickerwidget.h

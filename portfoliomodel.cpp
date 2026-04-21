@@ -58,8 +58,8 @@ QVariant PortfolioModel::data(const QModelIndex& index, int role) const
     }
 
     if (role == Qt::ForegroundRole && (index.column() == 5 || index.column() == 6)) {
-        if (pnl > 0)  return QColor("#E53935");
-        if (pnl < 0)  return QColor("#1E88E5");
+        if (pnl > 0)  return QColor(229, 57, 53);
+        if (pnl < 0)  return QColor(30, 136, 229);
     }
 
     if (role == Qt::TextAlignmentRole && index.column() >= 2)

@@ -12,6 +12,10 @@
 
 #include "portfoliomodel.h"
 #include "tickerwidget.h"
+#include "tradeservice.h"
+#include "exchangeservice.h"
+#include "scheduleservice.h"
+#include "exceptions.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
