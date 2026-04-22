@@ -118,7 +118,7 @@ void MainWindow::setupUIElements()
     DatabaseManager::instance().initDb();
 
     // 최초 실행시 100초분 데이터 생성
-    for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < 150; ++i) {
         updateGamePrices();
     }
 
@@ -409,11 +409,11 @@ void MainWindow::onSymbolChanged(int)
             m_stockPriceLabel->setText(QString("현재가: %1 원").arg(locale.toString((long long)price)));
         }
 
-        // 등락율 계산 (가격 히스토리에서 가장 오래된 가격과 현재 가격 비교)
-        QVector<double> history = getPriceHistory(symbol);
+        // 등락율 계산 (현재 봉의 시작가와 현재 가격 비교)
         double changeRate = 0.0;
-        if (history.size() >= 2) {
-            double openPrice = history.first();
+        QVector<CandleData> candles = getCandleData(symbol);
+        if (!candles.isEmpty()) {
+            double openPrice = candles.last().open;
             changeRate = ((price - openPrice) / openPrice) * 100.0;
         }
 
@@ -738,14 +738,16 @@ void MainWindow::refreshBank()
         m_bankExchangeRateLabel->setText(QString("1 USD = %1 KRW").arg(locale.toString((long long)rate)));
     }
 
-    // 환율 변동률 계산 및 표시
-    QVector<double> rateHistory = getPriceHistory("USDKRW");
-    if (m_bankExchangeRateChangeLabel && rateHistory.size() >= 2) {
-        double openRate = rateHistory.first();
-        double changeRate = ((rate - openRate) / openRate) * 100.0;
-        const char* changeColorStr = changeRate >= 0 ? "#E53935" : "#1E88E5";
-        m_bankExchangeRateChangeLabel->setText(QString("변동률: %1%").arg(QString::number(changeRate, 'f', 2)));
-        m_bankExchangeRateChangeLabel->setStyleSheet(QString("QLabel { font-size: 12px; color: %1; }").arg(changeColorStr));
+    // 환율 변동률 계산 및 표시 (현재 봉의 시작가 기준)
+    if (m_bankExchangeRateChangeLabel) {
+        QVector<CandleData> candles = getCandleData("USDKRW");
+        if (!candles.isEmpty()) {
+            double openRate = candles.last().open;
+            double changeRate = ((rate - openRate) / openRate) * 100.0;
+            const char* changeColorStr = changeRate >= 0 ? "#E53935" : "#1E88E5";
+            m_bankExchangeRateChangeLabel->setText(QString("변동률: %1%").arg(QString::number(changeRate, 'f', 2)));
+            m_bankExchangeRateChangeLabel->setStyleSheet(QString("QLabel { font-size: 12px; color: %1; }").arg(changeColorStr));
+        }
     }
 
     if (!isVisible()) return;
@@ -853,11 +855,11 @@ void MainWindow::onAutoTimeUpdate()
             m_stockPriceLabel->setText(QString("현재가: %1 원").arg(locale.toString((long long)price)));
         }
 
-        // 등락율 업데이트
-        QVector<double> history = getPriceHistory(symbol);
+        // 등락율 업데이트 (현재 봉의 시작가 기준)
         double changeRate = 0.0;
-        if (history.size() >= 2) {
-            double openPrice = history.first();
+        QVector<CandleData> candles = getCandleData(symbol);
+        if (!candles.isEmpty()) {
+            double openPrice = candles.last().open;
             changeRate = ((price - openPrice) / openPrice) * 100.0;
         }
 
@@ -875,7 +877,10 @@ void MainWindow::onAutoTimeUpdate()
     updateExchangeRate();
     refreshPortfolio();
     refreshHistory(symbol);
+    refreshBank();
     refreshPendingOrders(symbol);
+    setupChart();
+    setupExchangeChart();
 }
 
 void MainWindow::setupChart()
