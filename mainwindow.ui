@@ -18,6 +18,110 @@
     <bool>true</bool>
    </property>
    <layout class="QVBoxLayout" name="main_vlayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QWidget" name="headerBar">
+      <property name="fixedHeight">
+       <number>40</number>
+      </property>
+      <property name="styleSheet">
+       <string>QWidget { background-color: #f0f0f0; border-bottom: 1px solid #ccc; }</string>
+      </property>
+      <layout class="QHBoxLayout" name="headerLayout">
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <property name="leftMargin">
+        <number>8</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>8</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="profitRateLabel">
+         <property name="minimumWidth">
+          <number>120</number>
+         </property>
+         <property name="styleSheet">
+          <string>QLabel { padding: 5px 10px; font-weight: bold; }</string>
+         </property>
+         <property name="text">
+          <string>수익률: --</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="exchangeRateLabel">
+         <property name="minimumWidth">
+          <number>150</number>
+         </property>
+         <property name="styleSheet">
+          <string>QLabel { padding: 5px 10px; font-weight: bold; }</string>
+         </property>
+         <property name="text">
+          <string>💱 USD/KRW: --</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="TickerWidget" name="ticker">
+         <property name="minimumWidth">
+          <number>200</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="headerSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="settingsBtn">
+         <property name="maximumWidth">
+          <number>36</number>
+         </property>
+         <property name="maximumHeight">
+          <number>32</number>
+         </property>
+         <property name="styleSheet">
+          <string>QPushButton { border: none; font-size: 18px; background: transparent; }</string>
+         </property>
+         <property name="text">
+          <string>⚙️</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
@@ -521,6 +625,11 @@
    <class>QChartView</class>
    <extends>QGraphicsView</extends>
    <header>QtCharts/QChartView</header>
+  </customwidget>
+  <customwidget>
+   <class>TickerWidget</class>
+   <extends>QWidget</extends>
+   <header>tickerwidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -78,42 +78,8 @@ void MainWindow::initializeUI()
 
 void MainWindow::setupUIElements()
 {
-    // 수익률 정보 레이블
-    m_profitRateLabel = new QLabel(this);
-    m_profitRateLabel->setStyleSheet("QLabel { padding: 5px 10px; font-weight: bold; }");
-    m_profitRateLabel->setMinimumWidth(120);
-
-    // 환율 정보 레이블
-    m_exchangeRateLabel = new QLabel(this);
-    m_exchangeRateLabel->setStyleSheet("QLabel { padding: 5px 10px; font-weight: bold; }");
-    m_exchangeRateLabel->setMinimumWidth(150);
-
-    // 상단 헤더 바: 수익률 + 환율 + ticker(순위) + 설정 버튼
-    QWidget* headerBar = new QWidget(this);
-    headerBar->setFixedHeight(40);
-    headerBar->setStyleSheet("QWidget { background-color: #f0f0f0; border-bottom: 1px solid #ccc; }");
-    QHBoxLayout* headerLayout = new QHBoxLayout(headerBar);
-    headerLayout->setContentsMargins(8, 0, 8, 0);
-    headerLayout->setSpacing(6);
-
-    headerLayout->addWidget(m_profitRateLabel);
-    headerLayout->addWidget(m_exchangeRateLabel);
-
-    m_ticker = new TickerWidget(headerBar);
-    headerLayout->addWidget(m_ticker, 1);
-
-    QPushButton* settingsBtn = new QPushButton("⚙️", headerBar);
-    settingsBtn->setFixedSize(36, 32);
-    settingsBtn->setStyleSheet("QPushButton { border: none; font-size: 18px; background: transparent; }");
-    headerLayout->addWidget(settingsBtn);
-
-    // tabWidget 위에 헤더 바 삽입
-    QVBoxLayout* mainLayout = qobject_cast<QVBoxLayout*>(ui->centralwidget->layout());
-    if (mainLayout) {
-        mainLayout->insertWidget(0, headerBar);
-    }
-
-    connect(settingsBtn, &QPushButton::clicked, this, &MainWindow::onSettingsClicked);
+    // headerBar는 UI 파일에서 정적으로 생성됨
+    connect(ui->settingsBtn, &QPushButton::clicked, this, &MainWindow::onSettingsClicked);
 
     DatabaseManager::instance().initDb();
 
@@ -660,8 +626,8 @@ void MainWindow::refreshPortfolio()
     // 수익률 표시 (양수: 빨강, 음수: 파랑)
     const char* profitColorStr = profitRate >= 0 ? "#E53935" : "#1E88E5";
     QString profitText = QString::number(profitRate, 'f', 2) + "%";
-    m_profitRateLabel->setText("수익률: " + profitText);
-    m_profitRateLabel->setStyleSheet(QString("QLabel { padding: 5px 10px; font-weight: bold; color: %1; }").arg(profitColorStr));
+    ui->profitRateLabel->setText("수익률: " + profitText);
+    ui->profitRateLabel->setStyleSheet(QString("QLabel { padding: 5px 10px; font-weight: bold; color: %1; }").arg(profitColorStr));
 
     ui->port_cash_label->setText("시작금액: " + locale.toString(initialCash, 'f', 0) + " 원  |  현금(KRW): " + locale.toString(cash, 'f', 0) + " 원 | 현금(USD): $" + enLocale.toString(usdCash, 'f', 2));
     ui->port_total_label->setText("총 평가액: " + locale.toString(totalEval, 'f', 0) + " 원  |  수익률: " + QString::number(profitRate, 'f', 2) + "%");
@@ -1211,7 +1177,7 @@ void MainWindow::updateExchangeRate()
     QLocale locale(QLocale::Korean);
     double rate = getUsdKrwRate();
     QString exchangeText = "💱 USD/KRW: " + locale.toString((long long)rate);
-    m_exchangeRateLabel->setText(exchangeText);
+    ui->exchangeRateLabel->setText(exchangeText);
 }
 
 void MainWindow::refreshTicker()
@@ -1220,7 +1186,7 @@ void MainWindow::refreshTicker()
     auto history = DatabaseManager::instance().getProfitHistory();
 
     if (history.isEmpty()) {
-        m_ticker->setText("🥇 순위 기록 없음 — 전체 초기화 후 기록됩니다");
+        ui->ticker->setText("🥇 순위 기록 없음 — 전체 초기화 후 기록됩니다");
         return;
     }
 
@@ -1234,7 +1200,7 @@ void MainWindow::refreshTicker()
         rankText += QString("%1 %2 %3%  ")
                     .arg(medals[i], name, sign + QString::number(r.profitRate, 'f', 2));
     }
-    m_ticker->setText(rankText.trimmed());
+    ui->ticker->setText(rankText.trimmed());
 }
 
 void MainWindow::onBorrowClicked()

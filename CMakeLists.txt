@@ -27,6 +27,8 @@ qt_add_executable(stock_game
     tickerwidget.cpp
 )
 
+target_include_directories(stock_game PRIVATE ${CMAKE_SOURCE_DIR})
+
 target_link_libraries(stock_game
     PRIVATE
         Qt::Core

@@ -43,6 +43,11 @@ qrc_*.cpp
 # Logs
 *.log
 
+# Audio/Sounds
+sounds/
+*.wav
+*.mp3
+
 # OS
 .DS_Store
 Thumbs.db

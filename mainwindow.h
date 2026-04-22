@@ -65,9 +65,6 @@ private:
     Ui::MainWindow   *ui;
     PortfolioModel   *m_portModel;
     QTimer           *m_priceTimer;
-    TickerWidget     *m_ticker;
-    QLabel           *m_profitRateLabel;
-    QLabel           *m_exchangeRateLabel;
     QLabel           *m_stockIconLabel;
     QLabel           *m_stockNameLabel;
     QLabel           *m_stockPriceLabel;
